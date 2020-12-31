@@ -1,7 +1,7 @@
-all: input calculator
+all: client server
 
-input: input.c
-	gcc -o input input.c
+client: client.c
+	gcc -o client client.c
 
-calculator: calculator.c
-	gcc -o calculator calculator.c
+server: server.c
+	gcc -o server server.c
