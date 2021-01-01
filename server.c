@@ -32,12 +32,11 @@ static void do_handshake(){
 static void sighandler(int signo){
   if (signo == SIGPIPE){
 	do_handshake();
+	cuber();
   }
 }
 
-int main(){
-  signal(SIGPIPE, sighandler);
-  do_handshake();
+void cuber (){
   int buffer;
   int cube;
   mkfifo("to_client", 0644);
@@ -52,5 +51,11 @@ int main(){
     cube = buffer * buffer * buffer;
     write(fd1, &cube, sizeof(cube));
   }
+}
 
+int main(){
+  signal(SIGPIPE, sighandler);
+  do_handshake();
+  cuber();
+  return 0;
 }
