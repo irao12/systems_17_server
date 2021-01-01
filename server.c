@@ -29,8 +29,16 @@ static void do_handshake(){
   return;
 }
 
-void cuber (){
-  int buffer;
+static void sighandler(int signo){
+  if (signo == SIGPIPE){
+	do_handshake();
+  }
+}
+
+int main(){
+  signal(SIGPIPE, sighandler);
+  do_handshake();
+    int buffer;
   int cube;
   mkfifo("to_client", 0644);
   mkfifo("to_server", 0644);
@@ -44,18 +52,5 @@ void cuber (){
     cube = buffer * buffer * buffer;
     write(fd1, &cube, sizeof(cube));
   }
-}
-
-static void sighandler(int signo){
-  if (signo == SIGPIPE){
-	do_handshake();
-	cuber();
-  }
-}
-
-int main(){
-  signal(SIGPIPE, sighandler);
-  do_handshake();
-  cuber();
   return 0;
 }
