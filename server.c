@@ -12,6 +12,7 @@ static void do_handshake(){
   //step -1: server creates pipe, waits for connection
   mkfifo("makeshift0", 0666);
   int fd = open("makeshift0", O_WRONLY);
+  sleep(1);
   //step 1: client sends to server
   int fd1 = open("makeshift1", O_RDONLY);
   int test;

@@ -4,12 +4,14 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <signal.h>
 
 void do_handshake(){
   int test;
   printf("Starting Handshake\n");
   //step -1: server creates pipe, waits for connection
   int fd = open("makeshift0", O_RDONLY);
+  wait(1);
   //step 0: client creates pipe
   mkfifo("makeshift1", 0666);
   int fd1 = open ("makeshift1", O_WRONLY);
@@ -25,10 +27,20 @@ void do_handshake(){
   write(fd1, msg, sizeof(msg));
   printf("%s", msg);
   remove("makeshift1");
+
   return;
 }
 
+void sighandler(int signo){
+  if (signo == SIGINT){
+    remove("to_server");
+    remove("to_client");
+    exit(0);
+  }
+}
+
 int main(){
+  signal(SIGINT, sighandler);
   do_handshake();
   int buffer, cube;
   printf("This finds the volume of a cube\nEnter the side length\n");
