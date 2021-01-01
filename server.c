@@ -29,13 +29,6 @@ static void do_handshake(){
   return;
 }
 
-static void sighandler(int signo){
-  if (signo == SIGPIPE){
-	do_handshake();
-	cuber();
-  }
-}
-
 void cuber (){
   int buffer;
   int cube;
@@ -50,6 +43,13 @@ void cuber (){
     printf("cubing %d\n", buffer);
     cube = buffer * buffer * buffer;
     write(fd1, &cube, sizeof(cube));
+  }
+}
+
+static void sighandler(int signo){
+  if (signo == SIGPIPE){
+	do_handshake();
+	cuber();
   }
 }
 
