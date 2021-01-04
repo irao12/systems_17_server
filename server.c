@@ -15,18 +15,20 @@ static void do_handshake(){
   sleep(1);
   //step 1: client sends to server
   int fd1 = open("makeshift1", O_RDONLY);
-  int test;
-  read(fd1, &test, sizeof(test));
-  if (test == 100) printf("server received from client\n");
+  char buffer[100];
+  read(fd1, &buffer, sizeof(buffer));
+  printf("server received from client, client's pid: %s\n", buffer);
+  remove("makeshift0");
   //step 2: server sends to client
-  test = 200;
-  write(fd, &test, sizeof(test));
-  printf("server sent to client\n");
+  sprintf(buffer, "%d", getpid());
+  write(fd, &buffer, sizeof(buffer));
+  printf("server sent to client, server's pid: %s\n", buffer);
   //step 3: client sends to server
   char msg[100];
   read(fd1, msg, sizeof(msg));
   printf("%s", msg);
-  remove("makeshift0");
+  close(fd);
+  close(fd1);
   return;
 }
 

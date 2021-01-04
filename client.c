@@ -7,27 +7,27 @@
 #include <signal.h>
 
 void do_handshake(){
-  int test;
+  char buffer[100];
   printf("Starting Handshake\n");
   //step -1: server creates pipe, waits for connection
   int fd = open("makeshift0", O_RDONLY);
-  wait(1);
   //step 0: client creates pipe
   mkfifo("makeshift1", 0666);
   int fd1 = open ("makeshift1", O_WRONLY);
   //step 1: client sends to server
-  test = 100;
-  write(fd1, &test, sizeof(test));
-  printf("client sent to server\n");
+  sprintf(buffer, "%d", getpid());
+  write(fd1, &buffer, sizeof(buffer));
+  printf("client sent to server, client's pid: %s\n", buffer);
   //step 2: server sends to client
-  read(fd, &test, sizeof(test));
-  if (test == 200) printf("client received from server\n");
+  read(fd, &buffer, sizeof(buffer));
+  printf("client received from server, server's pid: %s\n", buffer);
+  remove("makeshift1");
   //step 3: client sends to server
   char msg[] = "Handshake Complete\n\n";
   write(fd1, msg, sizeof(msg));
   printf("%s", msg);
-  remove("makeshift1");
-
+  close(fd);
+  close(fd1);
   return;
 }
 
