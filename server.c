@@ -8,7 +8,7 @@
 #include <signal.h>
 
 static void do_handshake(){
-  printf("Starting Handshake\n");
+  printf("Starting Handshake, waiting for connection\n");
   //step -1: server creates pipe, waits for connection
   mkfifo("makeshift0", 0666);
   int fd = open("makeshift0", O_WRONLY);
@@ -32,22 +32,12 @@ static void do_handshake(){
   return;
 }
 
-static void sighandler(int signo){
-  if (signo == SIGPIPE){
-	do_handshake();
-  }
-}
-
-int main(){
-  signal(SIGPIPE, sighandler);
-  do_handshake();
-    int buffer;
-  int cube;
+void calculator(){
+  int buffer, cube;
   mkfifo("to_client", 0644);
   mkfifo("to_server", 0644);
   int fd = open("to_server", O_RDONLY);
   int fd1 = open("to_client", O_WRONLY);
-
   while(1){
     int hi = read(fd, &buffer, sizeof(buffer));
     if(hi)
@@ -55,5 +45,19 @@ int main(){
     cube = buffer * buffer * buffer;
     write(fd1, &cube, sizeof(cube));
   }
+}
+
+
+static void sighandler(int signo){
+  if (signo == SIGPIPE){
+	do_handshake();
+        calculator();
+  }
+}
+
+int main(){
+  signal(SIGPIPE, sighandler);
+  do_handshake();
+  calculator();
   return 0;
 }
