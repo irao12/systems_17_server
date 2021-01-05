@@ -32,7 +32,11 @@ static void do_handshake(){
   return;
 }
 
-void calculator(){
+int main(){
+  signal(SIGPIPE, sighandler);
+  while (1){
+	  
+  do_handshake();
   long buffer, cube;
   mkfifo("to_client", 0644);
   int fd = open("to_server", O_RDONLY);
@@ -44,19 +48,7 @@ void calculator(){
     cube = buffer * buffer * buffer;
     write(fd1, &cube, sizeof(cube));
   }
-}
-
-
-static void sighandler(int signo){
-  if (signo == SIGPIPE){
-	do_handshake();
-        calculator();
+	  
   }
-}
-
-int main(){
-  signal(SIGPIPE, sighandler);
-  do_handshake();
-  calculator();
   return 0;
 }
