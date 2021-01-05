@@ -33,7 +33,7 @@ static void do_handshake(){
 }
 
 int main(){
-  signal(SIGPIPE, sighandler);
+//  signal(SIGPIPE, sighandler);
   while (1){
 	  
   do_handshake();
@@ -43,12 +43,14 @@ int main(){
   int fd1 = open("to_client", O_WRONLY);
   while(1){
     int hi = read(fd, &buffer, sizeof(buffer));
+    if (buffer == -1221) break;
     if(hi)
     printf("cubing %ld\n", buffer);
     cube = buffer * buffer * buffer;
     write(fd1, &cube, sizeof(cube));
   }
-	  
+  close (fd);
+  close(fd1);
   }
   return 0;
 }

@@ -31,8 +31,12 @@ void do_handshake(){
   return;
 }
 
+int to_server;
+
 void sighandler(int signo){
   if (signo == SIGINT){
+    long sig = -1221;
+    write(to_server, &sig, sizeof(sig)); 
     remove("to_server");
     remove("to_client");
     exit(0);
@@ -46,6 +50,7 @@ int main(){
   printf("This finds the volume of a cube\nEnter the side length\n");
   mkfifo("to_server", 0644);
     int fd = open("to_server", O_WRONLY);
+    to_server = fd;
     int fd1 = open("to_client", O_RDONLY);
 
   while(1){
