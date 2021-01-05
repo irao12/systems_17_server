@@ -42,17 +42,17 @@ void sighandler(int signo){
 int main(){
   signal(SIGINT, sighandler);
   do_handshake();
-  int buffer, cube;
+  long buffer, cube;
   printf("This finds the volume of a cube\nEnter the side length\n");
-
+  mkfifo("to_server", 0644);
     int fd = open("to_server", O_WRONLY);
     int fd1 = open("to_client", O_RDONLY);
 
   while(1){
-    scanf("%d", &buffer);
+    scanf("%ld", &buffer);
     write(fd, &buffer, sizeof(buffer));
     read(fd1, &cube, sizeof(cube));
-    printf("Volume: %d\n", cube);
+    printf("Volume: %ld\n", cube);
   }
 
 }

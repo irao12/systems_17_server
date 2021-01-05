@@ -33,15 +33,14 @@ static void do_handshake(){
 }
 
 void calculator(){
-  int buffer, cube;
+  long buffer, cube;
   mkfifo("to_client", 0644);
-  mkfifo("to_server", 0644);
   int fd = open("to_server", O_RDONLY);
   int fd1 = open("to_client", O_WRONLY);
   while(1){
     int hi = read(fd, &buffer, sizeof(buffer));
     if(hi)
-    printf("cubing %d\n", buffer);
+    printf("cubing %ld\n", buffer);
     cube = buffer * buffer * buffer;
     write(fd1, &cube, sizeof(cube));
   }
