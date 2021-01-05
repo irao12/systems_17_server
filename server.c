@@ -32,10 +32,17 @@ static void do_handshake(){
   return;
 }
 
+void sighandler(int signo){
+  if (signo == SIGINT){
+    remove("makeshift0");
+    exit(0);
+  }
+}
+
 int main(){
-//  signal(SIGPIPE, sighandler);
+  signal(SIGINT, sighandler);
   while (1){
-	  
+
   do_handshake();
   long buffer, cube;
   mkfifo("to_client", 0644);
